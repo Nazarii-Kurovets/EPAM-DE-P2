@@ -1,0 +1,236 @@
+/* Create database `northwind` */
+CREATE DATABASE northwind;
+
+USE northwind;
+
+/*Table structure for table `categories` */
+DROP TABLE IF EXISTS `categories`;
+
+CREATE TABLE `categories` (
+  `CategoryID` int(11) NOT NULL AUTO_INCREMENT,
+  `CategoryName` varchar(15) NOT NULL,
+  `Description` mediumtext,
+  `Picture` longblob,
+  PRIMARY KEY (`CategoryID`),
+  KEY `CategoryName` (`CategoryName`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=LATIN1;
+
+/*Table structure for table `customers` */
+DROP TABLE IF EXISTS `customers`;
+
+CREATE TABLE `customers` (
+  `CustomerID` varchar(5) NOT NULL,
+  `CompanyName` varchar(40) NOT NULL,
+  `ContactName` varchar(30) DEFAULT NULL,
+  `ContactTitle` varchar(30) DEFAULT NULL,
+  `Address` varchar(60) DEFAULT NULL,
+  `City` varchar(15) DEFAULT NULL,
+  `Region` varchar(15) DEFAULT NULL,
+  `PostalCode` varchar(10) DEFAULT NULL,
+  `Country` varchar(15) DEFAULT NULL,
+  `Phone` varchar(24) DEFAULT NULL,
+  `Fax` varchar(24) DEFAULT NULL,
+  PRIMARY KEY (`CustomerID`),
+  KEY `City` (`City`),
+  KEY `CompanyName` (`CompanyName`),
+  KEY `PostalCode` (`PostalCode`),
+  KEY `Region` (`Region`)
+) ENGINE=InnoDB DEFAULT CHARSET=LATIN1;
+
+/*Table structure for table `employees` */
+DROP TABLE IF EXISTS `employees`;
+
+CREATE TABLE `employees` (
+  `EmployeeID` int(11) NOT NULL AUTO_INCREMENT,
+  `LastName` varchar(20) NOT NULL,
+  `FirstName` varchar(10) NOT NULL,
+  `Title` varchar(30) DEFAULT NULL,
+  `TitleOfCourtesy` varchar(25) DEFAULT NULL,
+  `BirthDate` date DEFAULT NULL,
+  `HireDate` date DEFAULT NULL,
+  `Address` varchar(60) DEFAULT NULL,
+  `City` varchar(15) DEFAULT NULL,
+  `Region` varchar(15) DEFAULT NULL,
+  `PostalCode` varchar(10) DEFAULT NULL,
+  `Country` varchar(15) DEFAULT NULL,
+  `HomePhone` varchar(24) DEFAULT NULL,
+  `Extension` varchar(4) DEFAULT NULL,
+  `Photo` longblob,
+  `Notes` mediumtext NOT NULL,
+  `ReportsTo` int(11) DEFAULT NULL,
+  `PhotoPath` varchar(255) DEFAULT NULL,
+  `Salary` float DEFAULT NULL,
+  PRIMARY KEY (`EmployeeID`),
+  KEY `LastName` (`LastName`),
+  KEY `PostalCode` (`PostalCode`),
+  KEY `FK_Employees_Employees` (`ReportsTo`),
+  CONSTRAINT `FK_Employees_Employees` FOREIGN KEY (`ReportsTo`) REFERENCES `employees` (`EmployeeID`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=LATIN1;
+
+
+/*Table structure for table `region` */
+DROP TABLE IF EXISTS `region`;
+
+CREATE TABLE `region` (
+  `RegionID` int(11) NOT NULL,
+  `RegionDescription` varchar(50) NOT NULL,
+  PRIMARY KEY (`RegionID`)
+) ENGINE=InnoDB DEFAULT CHARSET=LATIN1;
+
+/*Table structure for table `shippers` */
+DROP TABLE IF EXISTS `shippers`;
+
+CREATE TABLE `shippers` (
+  `ShipperID` int(11) NOT NULL AUTO_INCREMENT,
+  `CompanyName` varchar(40) NOT NULL,
+  `Phone` varchar(24) DEFAULT NULL,
+  PRIMARY KEY (`ShipperID`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+/*Table structure for table `suppliers` */
+DROP TABLE IF EXISTS `suppliers`;
+
+CREATE TABLE `suppliers` (
+  `SupplierID` int(11) NOT NULL AUTO_INCREMENT,
+  `CompanyName` varchar(40) NOT NULL,
+  `ContactName` varchar(30) DEFAULT NULL,
+  `ContactTitle` varchar(30) DEFAULT NULL,
+  `Address` varchar(60) DEFAULT NULL,
+  `City` varchar(15) DEFAULT NULL,
+  `Region` varchar(15) DEFAULT NULL,
+  `PostalCode` varchar(10) DEFAULT NULL,
+  `Country` varchar(15) DEFAULT NULL,
+  `Phone` varchar(24) DEFAULT NULL,
+  `Fax` varchar(24) DEFAULT NULL,
+  `HomePage` mediumtext,
+  PRIMARY KEY (`SupplierID`),
+  KEY `CompanyName` (`CompanyName`),
+  KEY `PostalCode` (`PostalCode`)
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=latin1;
+
+/*Table structure for table `territories` */
+DROP TABLE IF EXISTS `territories`;
+
+CREATE TABLE `territories` (
+  `TerritoryID` varchar(20) NOT NULL,
+  `TerritoryDescription` varchar(50) NOT NULL,
+  `RegionID` int(11) NOT NULL,
+  PRIMARY KEY (`TerritoryID`),
+  KEY `FK_Territories_Region` (`RegionID`),
+  CONSTRAINT `FK_Territories_Region` FOREIGN KEY (`RegionID`) REFERENCES `region` (`RegionID`)
+) ENGINE=InnoDB DEFAULT CHARSET=LATIN1;
+
+/*Table structure for table `orders` */
+DROP TABLE IF EXISTS `orders`;
+
+CREATE TABLE `orders` (
+  `OrderID` int(11) NOT NULL AUTO_INCREMENT,
+  `CustomerID` varchar(5) DEFAULT NULL,
+  `EmployeeID` int(11) DEFAULT NULL,
+  `OrderDate` date DEFAULT NULL,
+  `RequiredDate` date DEFAULT NULL,
+  `ShippedDate` date DEFAULT NULL,
+  `ShipVia` int(11) DEFAULT NULL,
+  `Freight` decimal(10,4) DEFAULT '0.0000',
+  `ShipName` varchar(40) DEFAULT NULL,
+  `ShipAddress` varchar(60) DEFAULT NULL,
+  `ShipCity` varchar(15) DEFAULT NULL,
+  `ShipRegion` varchar(15) DEFAULT NULL,
+  `ShipPostalCode` varchar(10) DEFAULT NULL,
+  `ShipCountry` varchar(15) DEFAULT NULL,
+  PRIMARY KEY (`OrderID`),
+  KEY `OrderDate` (`OrderDate`),
+  KEY `ShippedDate` (`ShippedDate`),
+  KEY `ShipPostalCode` (`ShipPostalCode`),
+  KEY `FK_Orders_Customers` (`CustomerID`),
+  KEY `FK_Orders_Employees` (`EmployeeID`),
+  KEY `FK_Orders_Shippers` (`ShipVia`),
+  CONSTRAINT `FK_Orders_Customers` FOREIGN KEY (`CustomerID`) REFERENCES `customers` (`CustomerID`),
+  CONSTRAINT `FK_Orders_Employees` FOREIGN KEY (`EmployeeID`) REFERENCES `employees` (`EmployeeID`),
+  CONSTRAINT `FK_Orders_Shippers` FOREIGN KEY (`ShipVia`) REFERENCES `shippers` (`ShipperID`)
+) ENGINE=InnoDB AUTO_INCREMENT=11078 DEFAULT CHARSET=LATIN1;
+
+/*Table structure for table `products` */
+DROP TABLE IF EXISTS `products`;
+
+CREATE TABLE `products` (
+  `ProductID` int(11) NOT NULL AUTO_INCREMENT,
+  `ProductName` varchar(40) NOT NULL,
+  `SupplierID` int(11) DEFAULT NULL,
+  `CategoryID` int(11) DEFAULT NULL,
+  `QuantityPerUnit` varchar(20) DEFAULT NULL,
+  `UnitPrice` decimal(10,4) DEFAULT '0.0000',
+  `UnitsInStock` smallint(2) DEFAULT '0',
+  `UnitsOnOrder` smallint(2) DEFAULT '0',
+  `ReorderLevel` smallint(2) DEFAULT '0',
+  `Discontinued` bit(1) NOT NULL DEFAULT b'0',
+  PRIMARY KEY (`ProductID`),
+  KEY `ProductName` (`ProductName`),
+  KEY `FK_Products_Categories` (`CategoryID`),
+  KEY `FK_Products_Suppliers` (`SupplierID`),
+  CONSTRAINT `FK_Products_Suppliers` FOREIGN KEY (`SupplierID`) REFERENCES `suppliers` (`SupplierID`),
+  CONSTRAINT `FK_Products_Categories` FOREIGN KEY (`CategoryID`) REFERENCES `categories` (`CategoryID`)
+) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=LATIN1;
+
+/*Table structure for table `orderdetails` */
+DROP TABLE IF EXISTS `orderdetails`;
+
+CREATE TABLE `orderdetails` (
+  `OrderID` int(11) NOT NULL,
+  `ProductID` int(11) NOT NULL,
+  `UnitPrice` decimal(10,4) NOT NULL DEFAULT '0.0000',
+  `Quantity` smallint(2) NOT NULL DEFAULT '1',
+  `Discount` double(8,0) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`OrderID`,`ProductID`),
+  KEY `FK_Order_Details_Products` (`ProductID`),
+  CONSTRAINT `FK_Order_Details_Products` FOREIGN KEY (`ProductID`) REFERENCES `products` (`ProductID`),
+  CONSTRAINT `FK_Order_Details_Orders` FOREIGN KEY (`OrderID`) REFERENCES `orders` (`OrderID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+/*Table structure for table `Contacts` */
+DROP TABLE IF EXISTS `Contacts`;
+
+CREATE TABLE `Contacts` (
+   `ContactID` int NOT NULL AUTO_INCREMENT,
+   `ContactType` varchar(50) NULL,
+   `CompanyName` varchar(40) NOT NULL,
+   `ContactName` varchar(30) NULL,
+   `ContactTitle` varchar(30) NULL,
+   `Address` varchar(60) NULL,
+   `City` varchar(15) NULL,
+   `Region` varchar(15) NULL,
+   `PostalCode` varchar(10) NULL,
+   `Country` varchar(15) NULL,
+   `Phone` varchar(24) NULL,
+   `Extension` varchar(4) NULL,
+   `Fax` varchar(24) NULL,
+   `HomePage` text NULL,
+   `PhotoPath` varchar(255) NULL,
+   `Photo` LONGBLOB,
+   PRIMARY KEY (`ContactID`));
+    
+/*Table structure for table `CustomerCustomerDemo` */
+DROP TABLE IF EXISTS `CustomerCustomerDemo`;
+
+CREATE TABLE `CustomerCustomerDemo` (
+	`CustomerID` varchar(5) NOT NULL,
+	`CustomerTypeID` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+/*Table structure for table `CustomerDemographics` */
+DROP TABLE IF EXISTS `CustomerDemographics`;
+
+CREATE TABLE `CustomerDemographics`(
+	`CustomerTypeID` varchar(10) NOT NULL,
+	`CustomerDesc` text NULL
+) ENGINE=InnoDB DEFAULT CHARSET=LATIN1;
+
+/*Table structure for table `EmployeeTerritories` */
+DROP TABLE IF EXISTS `EmployeeTerritories`;
+
+CREATE TABLE `EmployeeTerritories`(
+	`EmployeeID` int NOT NULL,
+	`TerritoryID` varchar(20) NOT NULL
+)  ENGINE=InnoDB DEFAULT CHARSET=LATIN1;
+
+
